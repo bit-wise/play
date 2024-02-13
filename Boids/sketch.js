@@ -18,7 +18,8 @@ class Boid {
             random(127) + random(127)
         );
         this.perceptionRadius = random(127 * 2) + random(127);
-        this.size = (this.perceptionRadius ** (1 / 2));
+        // this.size = this.perceptionRadius / 20
+        this.size = (this.perceptionRadius ** (1 / 3));
         this.maxsize = 0;
     }
 
@@ -129,26 +130,29 @@ class Boid {
 
     show() {
         strokeWeight(this.size + 9);
-        stroke(0, 0, 0, 8);
+        stroke(0, 0, 0, 4);
         point(this.position.x, this.position.y);
 
         strokeWeight(this.size + 3);
         stroke(this.rgb);
+        // stroke(255);
         point(this.position.x, this.position.y);
     }
 }
 
 function setup() {
-    for (let i = 0; i < Math.pow(2, 8); i++) {
+    for (let i = 0; i < Math.pow(2, 7); i++) {
         let b = new Boid(random(W), random(H));
         boids.push(b);
     }
     alignSlider = createSlider(0, 1, 0, 0.1);
-    cohesionSlider = createSlider(0, 1, 0, 0.1);
-    separationSlider = createSlider(0, 1, 1, 0.1);
-    edgeAvoidanceSlider = createSlider(0, 1, 0, 0.1);
-    trailSlider = createSlider(0, 128, 0, 1);
+    cohesionSlider = createSlider(0, 1, 0.9, 0.1);
+    separationSlider = createSlider(0, 1, 0, 0.1);
+    edgeAvoidanceSlider = createSlider(0, 1, 0.1, 0.1);
+    trailSlider = createSlider(0, 128, 128, 1);
 
+    // frameRate(24);
+    pixelDensity(4);
     createCanvas(W, H);
     background(0)
 }
@@ -164,6 +168,8 @@ function draw() {
     }
     averagePosition.div(boids.length);
     averageVelocity.div(boids.length);
+
+    // boids = shuffle(boids);
 
     for (let boid of boids) {
         boid.edges();
