@@ -2,17 +2,24 @@ const W = window.innerWidth;
 const H = window.innerHeight;
 let boids = [];
 
-let alignSlider, cohesionSlider, separationSlider;
+let alignSlider, cohesionSlider, separationSlider, trailSlider;
 
 class Boid {
-    constructor(x, y, rgb) {
+    constructor(x, y) {
         this.position = createVector(x, y);
         this.velocity = p5.Vector.random2D();
         this.velocity.setMag(random(2, 4));
         this.acceleration = createVector();
         this.maxForce = 0.2;
         this.maxSpeed = 4;
-        this.rgb = rgb;
+        this.rgb = color(
+            random(127) + random(127),
+            random(127) + random(127),
+            random(127) + random(127)
+        );
+        this.perceptionRadius = random(127 * 2) + random(127);
+        this.size = (this.perceptionRadius ** (1 / 2));
+        this.maxsize = 0;
     }
 
     edges() {
@@ -30,33 +37,26 @@ class Boid {
         }
     }
 
-    align(boids) {
-        let perceptionRadius = 100;
+    align(averageVelocity) {
         let steering = createVector();
-        let total = 0;
-        for (let other of boids) {
-            let d = dist(
-                this.position.x,
-                this.position.y,
-                other.position.x,
-                other.position.y
-            );
-            if (other != this && d < perceptionRadius) {
-                steering.add(other.velocity);
-                total++;
-            }
-        }
-        if (total > 0) {
-            steering.div(total);
-            steering.setMag(this.maxSpeed);
-            steering.sub(this.velocity);
-            steering.limit(this.maxForce);
-        }
+        steering.add(averageVelocity);
+        steering.setMag(this.maxSpeed);
+        steering.sub(this.velocity);
+        steering.limit(this.maxForce);
+        return steering;
+    }
+
+    cohesion(averagePosition) {
+        let steering = createVector();
+        steering.add(averagePosition);
+        steering.sub(this.position);
+        steering.setMag(this.maxSpeed);
+        steering.sub(this.velocity);
+        steering.limit(this.maxForce);
         return steering;
     }
 
     separation(boids) {
-        let perceptionRadius = 50;
         let steering = createVector();
         let total = 0;
         for (let other of boids) {
@@ -66,7 +66,7 @@ class Boid {
                 other.position.x,
                 other.position.y
             );
-            if (other != this && d < perceptionRadius) {
+            if (other != this && d < this.perceptionRadius) {
                 let diff = p5.Vector.sub(this.position, other.position);
                 diff.div(d);
                 steering.add(diff);
@@ -82,35 +82,9 @@ class Boid {
         return steering;
     }
 
-    cohesion(boids) {
-        let perceptionRadius = 100;
-        let steering = createVector();
-        let total = 0;
-        for (let other of boids) {
-            let d = dist(
-                this.position.x,
-                this.position.y,
-                other.position.x,
-                other.position.y
-            );
-            if (other != this && d < perceptionRadius) {
-                steering.add(other.position);
-                total++;
-            }
-        }
-        if (total > 0) {
-            steering.div(total);
-            steering.sub(this.position);
-            steering.setMag(this.maxSpeed);
-            steering.sub(this.velocity);
-            steering.limit(this.maxForce);
-        }
-        return steering;
-    }
-
-    flock(boids) {
-        let alignment = this.align(boids);
-        let cohesion = this.cohesion(boids);
+    flock(boids, averagePosition, averageVelocity) {
+        let alignment = this.align(averageVelocity);
+        let cohesion = this.cohesion(averagePosition);
         let separation = this.separation(boids);
 
         alignment.mult(alignSlider.value());
@@ -130,30 +104,45 @@ class Boid {
     }
 
     show() {
-        strokeWeight(8);
+        strokeWeight(this.size + 9);
+        stroke(0, 0, 0, 8);
+        point(this.position.x, this.position.y);
+
+        strokeWeight(this.size + 3);
         stroke(this.rgb);
         point(this.position.x, this.position.y);
     }
 }
 
 function setup() {
-    for (let i = 0; i < 256; i++) {
-        let rgb = color(random(255), random(255), random(255));
-        let b = new Boid(random(W), random(H), rgb);
+    for (let i = 0; i < Math.pow(2, 2); i++) {
+        let b = new Boid(random(W), random(H));
         boids.push(b);
     }
-    alignSlider = createSlider(0, 2, 1, 0.1);
-    cohesionSlider = createSlider(0, 2, 1, 0.1);
-    separationSlider = createSlider(0, 2, 1, 0.1);
+    alignSlider = createSlider(0, 2, 0.0, 0.1);
+    cohesionSlider = createSlider(0, 2, 0.1, 0.1);
+    separationSlider = createSlider(0, 2, 0.1, 0.1);
+    trailSlider = createSlider(0, 128, 0, 1);
 
     createCanvas(W, H);
+    background(0)
 }
 
 function draw() {
-    background(0);
+    background(0, 0, 0, trailSlider.value());
+
+    let averagePosition = createVector(0, 0);
+    let averageVelocity = createVector(0, 0);
+    for (let boid of boids) {
+        averagePosition.add(boid.position);
+        averageVelocity.add(boid.velocity);
+    }
+    averagePosition.div(boids.length);
+    averageVelocity.div(boids.length);
+
     for (let boid of boids) {
         boid.edges();
-        boid.flock(boids);
+        boid.flock(boids, averagePosition, averageVelocity);
         boid.update();
         boid.show();
     }
