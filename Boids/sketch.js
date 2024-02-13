@@ -2,7 +2,7 @@ const W = window.innerWidth;
 const H = window.innerHeight;
 let boids = [];
 
-let alignSlider, cohesionSlider, separationSlider, trailSlider;
+let alignSlider, cohesionSlider, separationSlider, trailSlider, edgeAvoidanceSlider;
 
 class Boid {
     constructor(x, y) {
@@ -82,18 +82,42 @@ class Boid {
         return steering;
     }
 
+    avoidEdges() {
+        let steering = createVector();
+        let edgeDistance = 5;
+
+        if (this.position.x < edgeDistance) {
+            steering.x += 1;
+        } else if (this.position.x > width - edgeDistance) {
+            steering.x -= 1;
+        }
+
+        if (this.position.y < edgeDistance) {
+            steering.y += 1;
+        } else if (this.position.y > height - edgeDistance) {
+            steering.y -= 1;
+        }
+
+        steering.sub(this.velocity);
+        steering.limit(this.maxForce);
+        return steering;
+    }
+
     flock(boids, averagePosition, averageVelocity) {
         let alignment = this.align(averageVelocity);
         let cohesion = this.cohesion(averagePosition);
         let separation = this.separation(boids);
+        let avoidEdges = this.avoidEdges();
 
         alignment.mult(alignSlider.value());
         cohesion.mult(cohesionSlider.value());
         separation.mult(separationSlider.value());
+        avoidEdges.mult(edgeAvoidanceSlider.value());
 
         this.acceleration.add(alignment);
         this.acceleration.add(cohesion);
         this.acceleration.add(separation);
+        this.acceleration.add(avoidEdges);
     }
 
     update() {
@@ -115,13 +139,14 @@ class Boid {
 }
 
 function setup() {
-    for (let i = 0; i < Math.pow(2, 2); i++) {
+    for (let i = 0; i < Math.pow(2, 8); i++) {
         let b = new Boid(random(W), random(H));
         boids.push(b);
     }
-    alignSlider = createSlider(0, 2, 0.0, 0.1);
-    cohesionSlider = createSlider(0, 2, 0.1, 0.1);
-    separationSlider = createSlider(0, 2, 0.1, 0.1);
+    alignSlider = createSlider(0, 1, 0, 0.1);
+    cohesionSlider = createSlider(0, 1, 0, 0.1);
+    separationSlider = createSlider(0, 1, 1, 0.1);
+    edgeAvoidanceSlider = createSlider(0, 1, 0, 0.1);
     trailSlider = createSlider(0, 128, 0, 1);
 
     createCanvas(W, H);
