@@ -1,13 +1,19 @@
-const W = window.innerWidth;
-const H = window.innerHeight;
+const minWindow = 720// Math.min(window.innerWidth, window.innerHeight);
+const W = minWindow;
+const H = minWindow;
 const WH = W * H;
+const W2 = Math.ceil(W / 2);
+const H2 = Math.ceil(H / 2);
 
 // Conway's Game of Life
 
 let grid;
 let cols;
 let rows;
-let resolution = 2;
+let resolution = 1;
+let epoch = 0;
+let fps = 24;
+let old_seed = 0;
 
 function make2DArray(cols, rows) {
     let arr = new Array(cols);
@@ -31,6 +37,7 @@ function countNeighbors(grid, x, y) {
 }
 
 function setup() {
+    frameRate(fps);
     createCanvas(W, H);
     cols = Math.ceil(W / resolution);
     rows = Math.ceil(H / resolution);
@@ -38,15 +45,19 @@ function setup() {
     grid = make2DArray(cols, rows);
     for (let i = 0; i < cols; i++) {
         for (let j = 0; j < rows; j++) {
-            grid[i][j] = 0//floor(random(2));
+            grid[i][j] = 0
         }
     }
+    noStroke();
+    background(0);
 }
 
 function draw() {
-    background(0, 0, 0, 32);
+    background(0);
 
     let next = make2DArray(cols, rows);
+
+    let seed = round(map(round(new Date().getTime() / 1000) % 86400, 0, 86400, 0, W2));
 
     // Compute next based on grid
     for (let i = 0; i < cols; i++) {
@@ -65,13 +76,28 @@ function draw() {
 
             let c2 = round(cols / 2);
             let r2 = round(rows / 2);
-            let r = 3;
+            let r = seed;
+            let L = c2 - r
+            let R = c2 + r
+            let T = r2 - r
+            let B = r2 + r
+            let b = 1
 
-            if (i > c2 - r && i < c2 + r && j > r2 - r && j < r2 + r) {
-                next[i][j] = floor(random(2));
+
+            if (old_seed != seed) {
+                if (i > L && i < R && j > T && j < B) {
+                    if (i == L + b || i == R - b || j == T + b || j == B - b) {
+                        next[i][j] = !state
+                    }
+                }
             }
         }
     }
+
+    if (old_seed != seed) {
+        epoch++;
+    }
+    old_seed = seed;
 
     grid = next;
 
@@ -81,7 +107,6 @@ function draw() {
             let y = j * resolution;
             if (grid[i][j] == 1) {
                 fill(255);
-                stroke(0);
                 rect(x, y, resolution, resolution);
             }
         }
