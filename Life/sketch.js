@@ -44,7 +44,7 @@ function setup() {
 }
 
 function draw() {
-    background(0);
+    background(0, 0, 0, 32);
 
     let next = make2DArray(cols, rows);
 
