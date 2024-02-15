@@ -12,7 +12,7 @@ let cols;
 let rows;
 let resolution = 1;
 let epoch = 0;
-let fps = 24;
+let fps = 12;
 let old_seed = 0;
 
 function make2DArray(cols, rows) {
