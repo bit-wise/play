@@ -1,4 +1,4 @@
-const minWindow = 720// Math.min(window.innerWidth, window.innerHeight);
+const minWindow = Math.floor(Math.min(window.innerWidth, window.innerHeight) / 2) * 2 - 1;
 const W = minWindow;
 const H = minWindow;
 const WH = W * H;
@@ -57,7 +57,16 @@ function draw() {
 
     let next = make2DArray(cols, rows);
 
-    let seed = round(map(round(new Date().getTime() / 1000) % 86400, 0, 86400, 0, W2));
+    let seed = 2; //round(map(round(new Date().getTime() / 1000) % 86400, 0, 86400, 0, W2));
+
+    for (let i = 0; i < cols; i++) {
+        let state = grid[i][H2];
+        if (state == 1) {
+            seed++;
+        }
+    }
+
+    // console.log(seed);
 
     // Compute next based on grid
     for (let i = 0; i < cols; i++) {
@@ -84,13 +93,13 @@ function draw() {
             let b = 1
 
 
-            if (old_seed != seed) {
+            // if (old_seed != seed) {
                 if (i > L && i < R && j > T && j < B) {
                     if (i == L + b || i == R - b || j == T + b || j == B - b) {
                         next[i][j] = !state
                     }
                 }
-            }
+            // }
         }
     }
 
