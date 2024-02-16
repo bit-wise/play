@@ -11,9 +11,7 @@ let grid;
 let cols;
 let rows;
 let resolution = 1;
-let epoch = 0;
 let fps = 12;
-let old_seed = 0;
 
 function make2DArray(cols, rows) {
     let arr = new Array(cols);
@@ -93,20 +91,13 @@ function draw() {
             let b = 1
 
 
-            // if (old_seed != seed) {
-                if (i > L && i < R && j > T && j < B) {
-                    if (i == L + b || i == R - b || j == T + b || j == B - b) {
-                        next[i][j] = !state
-                    }
+            if (i > L && i < R && j > T && j < B) {
+                if (i == L + b || i == R - b || j == T + b || j == B - b) {
+                    next[i][j] = !state
                 }
-            // }
+            }
         }
     }
-
-    if (old_seed != seed) {
-        epoch++;
-    }
-    old_seed = seed;
 
     grid = next;
 
