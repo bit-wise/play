@@ -48,7 +48,7 @@ function setup() {
         }
     }
 
-    seed += round(map(round(new Date().getTime() / 1000) % 86400, 0, 86400, 0, W2));
+    seed += round(new Date().getTime() % W2);
 
     noStroke();
     background(0);
