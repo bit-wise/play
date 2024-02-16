@@ -12,6 +12,7 @@ let cols;
 let rows;
 let resolution = 1;
 let fps = 12;
+let seed = 2;
 
 function make2DArray(cols, rows) {
     let arr = new Array(cols);
@@ -46,6 +47,9 @@ function setup() {
             grid[i][j] = 0
         }
     }
+
+    seed += round(map(round(new Date().getTime() / 1000) % 86400, 0, 86400, 0, W2));
+
     noStroke();
     background(0);
 }
@@ -54,8 +58,6 @@ function draw() {
     background(0);
 
     let next = make2DArray(cols, rows);
-
-    let seed = 2; //round(map(round(new Date().getTime() / 1000) % 86400, 0, 86400, 0, W2));
 
     for (let i = 0; i < cols; i++) {
         let state = grid[i][H2];
@@ -111,4 +113,6 @@ function draw() {
             }
         }
     }
+
+    seed = 2;
 }
