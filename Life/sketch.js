@@ -1,6 +1,8 @@
 const minWindow = Math.floor(Math.min(window.innerWidth, window.innerHeight) / 2) * 2 - 1;
-const W = minWindow;
-const H = minWindow;
+// const W = minWindow;
+// const H = minWindow;
+const W = window.innerWidth;
+const H = window.innerHeight;
 const WH = W * H;
 const W2 = Math.ceil(W / 2);
 const H2 = Math.ceil(H / 2);
@@ -60,7 +62,7 @@ function draw() {
     let next = make2DArray(cols, rows);
 
     for (let i = 0; i < cols; i++) {
-        let state = grid[i][H2];
+        let state = grid[i][H2-1];
         if (state == 1) {
             seed++;
         }
