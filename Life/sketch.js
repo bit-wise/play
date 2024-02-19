@@ -1,8 +1,8 @@
 const minWindow = Math.floor(Math.min(window.innerWidth, window.innerHeight) / 2) * 2 - 1;
 // const W = minWindow;
 // const H = minWindow;
-const W = window.innerWidth;
-const H = window.innerHeight;
+const W = Math.floor(window.innerWidth / 2) * 2 - 1;
+const H = Math.floor(window.innerHeight / 2) * 2 - 1;;
 const WH = W * H;
 const W2 = Math.ceil(W / 2);
 const H2 = Math.ceil(H / 2);
@@ -15,6 +15,7 @@ let rows;
 let resolution = 1;
 let fps = 12;
 let seed = 2;
+let seedlist = [];
 
 function make2DArray(cols, rows) {
     let arr = new Array(cols);
@@ -38,7 +39,7 @@ function countNeighbors(grid, x, y) {
 }
 
 function setup() {
-    frameRate(fps);
+    // frameRate(fps);
     createCanvas(W, H);
     cols = Math.ceil(W / resolution);
     rows = Math.ceil(H / resolution);
@@ -47,23 +48,28 @@ function setup() {
     for (let i = 0; i < cols; i++) {
         for (let j = 0; j < rows; j++) {
             grid[i][j] = 0
+
+            let deg = (i * rows + j) / (cols * rows)
+            let x = Math.cos(TWO_PI * deg);
+            let y = Math.sin(TWO_PI * deg);
+            seedlist.push([x, y]);
         }
     }
 
-    seed += round(new Date().getTime() % W2);
+    seed += round(new Date().getTime() % W2) + 5;
 
     noStroke();
     background(0);
 }
 
 function draw() {
-    background(0);
+    background(0, 0, 0, 8);
 
     let next = make2DArray(cols, rows);
 
     for (let i = 0; i < cols; i++) {
-        let state = grid[i][H2-1];
-        if (state == 1) {
+        let s = grid[i][H2 - 1] + grid[i][H2 - 2] + grid[i][H2 + 3];
+        if (s > 1) {
             seed++;
         }
     }
@@ -84,24 +90,15 @@ function draw() {
             } else {
                 next[i][j] = state;
             }
-
-            let c2 = round(cols / 2);
-            let r2 = round(rows / 2);
-            let r = seed;
-            let L = c2 - r
-            let R = c2 + r
-            let T = r2 - r
-            let B = r2 + r
-            let b = 1
-
-
-            if (i > L && i < R && j > T && j < B) {
-                if (i == L + b || i == R - b || j == T + b || j == B - b) {
-                    next[i][j] = !state
-                }
-            }
         }
     }
+
+    seedlist.map((xy) => {
+        let x = round(xy[0] * seed + W2);
+        let y = round(xy[1] * seed + H2);
+        let state = grid[x][y];
+        next[x][y] = !state
+    })
 
     grid = next;
 
