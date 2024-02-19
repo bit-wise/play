@@ -13,7 +13,7 @@ let grid;
 let cols;
 let rows;
 let resolution = 1;
-let fps = 12;
+let fps = 24;
 let seed = 2;
 let seedlist = [];
 
@@ -68,7 +68,7 @@ function draw() {
     let next = make2DArray(cols, rows);
 
     for (let i = 0; i < cols; i++) {
-        let s = grid[i][H2 - 1] + grid[i][H2 - 2] + grid[i][H2 + 3];
+        let s = grid[i][H2 - 1] + grid[i][H2 - 3] + grid[i][H2 - 5];
         if (s > 1) {
             seed++;
         }
