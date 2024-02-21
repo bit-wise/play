@@ -44,6 +44,10 @@ function rando() {
     return rstate
 }
 
+function randint(num){
+    return Math.floor(rando() * num);
+}
+
 function makeGrid() {
     cols = Math.ceil(W / resolution);
     rows = Math.ceil(H / resolution);
@@ -62,38 +66,28 @@ function setup() {
     frameRate(fps);
     createCanvas(W, H);
     makeGrid();
-    fill(255, 255, 255, 255);
+    fill(255, 255, 255);
     noStroke();
     background(0);
 }
 
-let I = -3;
+let I = 0;
 let O = 0;
 let P = 0;
 function draw() {
-    background(0, 0, 0, 8);
-    I++;
-    O = 0
-    P = 0
-    for (let i = 0; i < cols; i++) {
-        for (let j = 0; j < rows; j++) {
-            if (grid[i][j] == 1) {
-                O+= cols1;
-                P+= fps1;
-            }
-        }
-    }
-    P = round(P);
-    // if (I++ > 1000) {
-    //     I = 0;
-    //     makeGrid();
+    background(0, 0, 0);
+    // I++;
+    // O = 0
+    // P = 0
+    // for (let i = 0; i < cols; i++) {
+    //     for (let j = 0; j < rows; j++) {
+    //         if (grid[i][j] == 1) {
+    //             O+= cols1;
+    //             P+= fps1;
+    //         }
+    //     }
     // }
-
-    // if (I % 2) {
-    //     fill(255, 255, 255, 64);
-    // }else {
-    //     fill(0, 0, 0, 64);
-    // }
+    // P = round(P);
 
     let next = make2DArray(cols, rows);
 
@@ -110,14 +104,17 @@ function draw() {
                 next[i][j] = state;
             }
 
-            if (I % P == 0 && i > W2 - O && i < W2 + O && j > H2 - O && j < H2 + O) {
-                // next[i][j] = rando() > rando() ? 1 : 0;//!state;
-                next[i][j] = !state;
-            }
+            // if (I % P == 0 && i > W2 - O && i < W2 + O && j > H2 - O && j < H2 + O) {
+            //     // next[i][j] = rando() > rando() ? 1 : 0;//!state;
+            //     next[i][j] = !state;
+            // }
         }
     }
+    next[randint(cols)][randint(rows)] = !next[randint(cols)][randint(rows)];
 
     grid = next;
+
+    // fill(random(255), random(255), random(255), 160);
 
     for (let i = 0; i < cols; i++) {
         for (let j = 0; j < rows; j++) {
