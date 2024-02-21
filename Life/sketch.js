@@ -71,7 +71,7 @@ let I = -3;
 let O = 0;
 let P = 0;
 function draw() {
-    background(0, 0, 0, 255);
+    background(0, 0, 0, 8);
     I++;
     O = 0
     P = 0
