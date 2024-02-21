@@ -2,9 +2,14 @@ const W = Math.floor(window.innerWidth / 2) * 2 - 1;
 const H = Math.floor(window.innerHeight / 2) * 2 - 1;
 const W2 = Math.ceil(W / 2);
 const H2 = Math.ceil(H / 2);
+const fps = 24;
+const fps1 = 1 / fps;
+
+const interval = fps * 60;
 
 let grid;
 let cols;
+let cols1;
 let rows;
 let resolution = 1;
 
@@ -42,6 +47,8 @@ function rando() {
 function makeGrid() {
     cols = Math.ceil(W / resolution);
     rows = Math.ceil(H / resolution);
+    // cols1 = 1 / (Math.max(cols, rows) / 2 / Math.PI);
+    cols1 = (1 / cols + 1 / rows) * 2;
 
     grid = make2DArray(cols, rows);
     for (let i = 0; i < cols; i++) {
@@ -52,7 +59,7 @@ function makeGrid() {
 }
 
 function setup() {
-    frameRate(24);
+    frameRate(fps);
     createCanvas(W, H);
     makeGrid();
     fill(255, 255, 255, 255);
@@ -60,11 +67,23 @@ function setup() {
     background(0);
 }
 
-let I = 0;
-let O = 100;
+let I = -3;
+let O = 0;
+let P = 0;
 function draw() {
     background(0, 0, 0, 255);
     I++;
+    O = 0
+    P = 0
+    for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+            if (grid[i][j] == 1) {
+                O+= cols1;
+                P+= fps1;
+            }
+        }
+    }
+    P = round(P);
     // if (I++ > 1000) {
     //     I = 0;
     //     makeGrid();
@@ -91,7 +110,7 @@ function draw() {
                 next[i][j] = state;
             }
 
-            if (I % 240 == 0 && i > W2 - O && i < W2 + O && j > H2 - O && j < H2 + O) {
+            if (I % P == 0 && i > W2 - O && i < W2 + O && j > H2 - O && j < H2 + O) {
                 // next[i][j] = rando() > rando() ? 1 : 0;//!state;
                 next[i][j] = !state;
             }
