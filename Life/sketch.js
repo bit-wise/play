@@ -48,7 +48,7 @@ function makeGrid() {
     cols = Math.ceil(W / resolution);
     rows = Math.ceil(H / resolution);
     // cols1 = 1 / (Math.max(cols, rows) / 2 / Math.PI);
-    cols1 = (1 / cols + 1 / rows) * 2;
+    cols1 = (1 / cols + 1 / rows) * 1;
 
     grid = make2DArray(cols, rows);
     for (let i = 0; i < cols; i++) {
