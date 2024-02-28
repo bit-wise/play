@@ -1,27 +1,31 @@
 const W = window.innerWidth;
 const H = window.innerHeight;
-const Wi = W * Math.pow(2, 16);
-const Hi = H * Math.pow(2, 16);
-const resolution = 10;
+const resolution = 1;
+const cols = Math.floor(W / resolution) * resolution + resolution;
+const rows = Math.floor(H / resolution) * resolution + resolution;
+const Wi = cols * Math.pow(2, 16);
+const Hi = rows * Math.pow(2, 16);
 
 const dot = {
-    x: Math.floor(W / 2) + Wi,
-    y: Math.floor(H / 2) + Hi
+    x: Math.floor(cols / 2) + Wi,
+    y: Math.floor(rows / 2) + Hi
 }
 
 function setup() {
-    createCanvas(W, H);
+    createCanvas(cols - resolution, rows - resolution);
     strokeWeight(resolution);
     background(0);
 }
 
-
-function direction() {
-    return Math.random();
+let state = 0;
+function direction(i) {
+    state = ((state + 1/i) * 10) % 1;
+    return state;
+    // return Math.random();
 }
 
 function drawPoint() {
-    const dir = direction();
+    const dir = direction(dot.x + dot.y);
     if (dir < 0.25) {
         dot.x += resolution;
     } else if (dir < 0.5) {
@@ -32,8 +36,8 @@ function drawPoint() {
         dot.y -= resolution;
     }
 
-    const x = dot.x % W;
-    const y = dot.y % H;
+    const x = dot.x % cols;
+    const y = dot.y % rows;
 
     const color = get(x, y);
     let R = color[0];
