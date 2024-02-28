@@ -5,8 +5,8 @@ const Hi = H * Math.pow(2, 16);
 const resolution = 10;
 
 const dot = {
-    x: Math.floor(W / 2),
-    y: Math.floor(H / 2)
+    x: Math.floor(W / 2) + Wi,
+    y: Math.floor(H / 2) + Hi
 }
 
 function setup() {
@@ -15,36 +15,49 @@ function setup() {
     background(0);
 }
 
-function draw() {
-    const direction = Math.random();
-    if (direction < 0.25) {
+
+function direction() {
+    return Math.random();
+}
+
+function drawPoint() {
+    const dir = direction();
+    if (dir < 0.25) {
         dot.x += resolution;
-    } else if (direction < 0.5) {
+    } else if (dir < 0.5) {
         dot.x -= resolution;
-    } else if (direction < 0.75) {
+    } else if (dir < 0.75) {
         dot.y += resolution;
     } else {
         dot.y -= resolution;
     }
 
-    const x = (dot.x + Wi) % W;
-    const y = (dot.y + Hi) % H;
+    const x = dot.x % W;
+    const y = dot.y % H;
 
     const color = get(x, y);
     let R = color[0];
     let G = color[1];
     let B = color[2];
-    B+=10;
-    if (B == 255) {
+    B += 10;
+    if (B >= 255) {
         B = 0;
-        G+=10;
+        G += 10;
     }
-    if (G == 255) {
+    if (G >= 255) {
         G = 0;
-        R+=10;
+        R += 10;
     }
-    // console.log(color, R, G, B);
+    if (R >= 255) {
+        noLoop();
+        console.log('Art over.');
+    }
     stroke(R, G, B);
     point(x, y);
-    // noLoop();
+}
+
+function draw() {
+    for (let i = 0; i < 10000; i++) {
+        drawPoint();
+    }
 }
