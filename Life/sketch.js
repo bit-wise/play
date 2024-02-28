@@ -108,9 +108,12 @@ function draw() {
             //     // next[i][j] = rando() > rando() ? 1 : 0;//!state;
             //     next[i][j] = !state;
             // }
+            if (j == H2 - 1) {
+                next[i][j] = !state;
+            }
         }
     }
-    next[randint(cols)][randint(rows)] = !next[randint(cols)][randint(rows)];
+    // next[randint(cols)][randint(rows)] = !next[randint(cols)][randint(rows)];
 
     grid = next;
 
