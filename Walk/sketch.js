@@ -1,10 +1,12 @@
 const W = window.innerWidth;
 const H = window.innerHeight;
-const resolution = 1;
+const resolution = 2;
 const cols = Math.floor(W / resolution) * resolution + resolution;
 const rows = Math.floor(H / resolution) * resolution + resolution;
 const Wi = cols * Math.pow(2, 16);
 const Hi = rows * Math.pow(2, 16);
+const colorScaler = 20;
+const resScaler = 1/2;
 
 const dot = {
     x: Math.floor(cols / 2) + Wi,
@@ -13,7 +15,7 @@ const dot = {
 
 function setup() {
     createCanvas(cols - resolution, rows - resolution);
-    strokeWeight(resolution);
+    strokeWeight(resolution * resScaler);
     background(0);
 }
 
@@ -43,14 +45,14 @@ function drawPoint() {
     let R = color[0];
     let G = color[1];
     let B = color[2];
-    B += 10;
+    B += colorScaler;
     if (B >= 255) {
         B = 0;
-        G += 10;
+        G += colorScaler;
     }
     if (G >= 255) {
         G = 0;
-        R += 10;
+        R += colorScaler;
     }
     if (R >= 255) {
         noLoop();
