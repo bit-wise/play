@@ -1,12 +1,17 @@
 const W = window.innerWidth;
 const H = W;// window.innerHeight;
-const resolution = 1;
+const batch = 100;
+const resolution = 6;
 const cols = Math.floor(W / resolution) * resolution + resolution;
 const rows = Math.floor(H / resolution) * resolution + resolution;
 const Wi = cols * Math.pow(2, 16);
 const Hi = rows * Math.pow(2, 16);
 const colorScaler = 50;
-const resScaler = 1/2;
+const halfRes = resolution / 2;
+const canvasSize = {
+    w: cols - resolution,
+    h: rows - resolution
+}
 
 const dot = {
     x: Math.floor(cols / 2) + Wi,
@@ -14,14 +19,15 @@ const dot = {
 }
 
 function setup() {
-    createCanvas(cols - resolution, rows - resolution);
+    createCanvas(canvasSize.w, canvasSize.h);
     noStroke();
+    noFill();
     background(0);
 }
 
-let state = 0;
+let state = 1/(Date.now());
 function direction(i) {
-    state = ((state + 1/i) * 10) % 1;
+    state = ((state + 1 / i) * 10) % 1;
     return state;
 }
 
@@ -58,11 +64,44 @@ function drawPoint() {
         console.log('Art over.');
     }
     fill(R, G, B);
-    rect(x, y, resolution, resolution);
+    rect(x, y, halfRes, halfRes);
+}
+
+function drawLine() {
+    const ox = dot.x % cols;
+    const oy = dot.y % rows;
+    const dir = direction(dot.x + dot.y);
+    dot.x += Math.sin(dir * TWO_PI) * resolution;
+    dot.y += Math.cos(dir * TWO_PI) * resolution;
+
+    const x = Math.round(dot.x % cols);
+    const y = Math.round(dot.y % rows);
+
+    if (x > resolution && y > resolution && x < canvasSize.w && y < canvasSize.h) {
+        const color = get(x, y);
+        let R = color[0];
+        let G = color[1];
+        let B = color[2];
+        B += colorScaler;
+        if (B >= 255) {
+            B = 0;
+            G += colorScaler;
+        }
+        if (G >= 255) {
+            G = 0;
+            R += colorScaler;
+        }
+        if (R >= 255) {
+            noLoop();
+            console.log('Art over.');
+        }
+        stroke(R, G, B);
+        line(ox, oy, x, y);
+    }
 }
 
 function draw() {
-    for (let i = 0; i < 10000; i++) {
-        drawPoint();
+    for (let i = 0; i < batch; i++) {
+        drawLine();
     }
 }
