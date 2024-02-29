@@ -1,11 +1,11 @@
 const W = window.innerWidth;
-const H = window.innerHeight;
-const resolution = 2;
+const H = W;// window.innerHeight;
+const resolution = 1;
 const cols = Math.floor(W / resolution) * resolution + resolution;
 const rows = Math.floor(H / resolution) * resolution + resolution;
 const Wi = cols * Math.pow(2, 16);
 const Hi = rows * Math.pow(2, 16);
-const colorScaler = 20;
+const colorScaler = 50;
 const resScaler = 1/2;
 
 const dot = {
