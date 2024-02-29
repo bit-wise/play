@@ -1,13 +1,13 @@
 const W = window.innerWidth;
 const H = W;// window.innerHeight;
 const batch = 100;
-const resolution = 6;
+const resolution = 2;
 const cols = Math.floor(W / resolution) * resolution + resolution;
 const rows = Math.floor(H / resolution) * resolution + resolution;
 const Wi = cols * Math.pow(2, 16);
 const Hi = rows * Math.pow(2, 16);
 const colorScaler = 50;
-const halfRes = resolution / 2;
+const halfRes = resolution / 1;
 const canvasSize = {
     w: cols - resolution,
     h: rows - resolution
@@ -102,6 +102,7 @@ function drawLine() {
 
 function draw() {
     for (let i = 0; i < batch; i++) {
-        drawLine();
+        // drawLine();
+        drawPoint();
     }
 }
