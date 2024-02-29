@@ -15,7 +15,7 @@ const dot = {
 
 function setup() {
     createCanvas(cols - resolution, rows - resolution);
-    strokeWeight(resolution * resScaler);
+    noStroke();
     background(0);
 }
 
@@ -23,7 +23,6 @@ let state = 0;
 function direction(i) {
     state = ((state + 1/i) * 10) % 1;
     return state;
-    // return Math.random();
 }
 
 function drawPoint() {
@@ -58,8 +57,8 @@ function drawPoint() {
         noLoop();
         console.log('Art over.');
     }
-    stroke(R, G, B);
-    point(x, y);
+    fill(R, G, B);
+    rect(x, y, resolution, resolution);
 }
 
 function draw() {
